@@ -13,6 +13,5 @@ express()
   .set("views", path.join(__dirname, "views"))
   .set("view engine", "ejs")
   .get("/", (req, res) => res.render("pages/index"))
-  .use("/users", usersRouter)
-  .use("/react/recording", recordingRouter)
+  .use("/recording", recordingRouter)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
