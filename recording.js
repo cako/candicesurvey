@@ -60,6 +60,20 @@ router.post("/:id", function (req, res, next) {
   }
 });
 
+router.get("/:id", function (req, res) {
+  let filename = path.join("recordings", req.params.id);
+  if (filename.indexOf(".ogg") === -1) {
+    filename = filename + ".ogg";
+  }
+
+  s3.getObject({ Bucket: process.env.S3_BUCKET_NAME, Key: filename })
+    .on("httpHeaders", function (statusCode, headers) {
+      res.set("Content-Length", headers["content-length"]);
+      res.set("Content-Type", "audio/ogg; codecs=opus");
+      this.response.httpResponse.createUnbufferedStream().pipe(res);
+    })
+    .send();
+});
 // http://localhost:5000/react/post/Ui7yGoYXg
 
 module.exports = router;
