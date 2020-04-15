@@ -6,7 +6,20 @@ const PORT = process.env.PORT || 5000;
 let usersRouter = require("./users");
 let recordingRouter = require("./recording");
 
+function requireHTTPS(req, res, next) {
+  // The 'x-forwarded-proto' check is for Heroku
+  if (
+    !req.secure &&
+    req.get("x-forwarded-proto") !== "https" &&
+    process.env.NODE_ENV !== "development"
+  ) {
+    return res.redirect("https://" + req.get("host") + req.url);
+  }
+  next();
+}
+
 express()
+  .use(requireHTTPS)
   .use(express.json({ limit: "200mb" }))
   .use(
     express.urlencoded({
